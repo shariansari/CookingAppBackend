@@ -1,31 +1,41 @@
 
 const express = require("express")
-const mongoose = require("mongoose")
 const ip = require('ip')
+const cors = require('cors')
+const {userRouter} = require("./controllers/user.controler.js")
+const {categoryRouter} = require("./controllers/category.controller.js")
+const {recipeRouter} = require("./controllers/recipe.controller.js")
 
-const {registerUser,loginUser} =require('./controllers/user.controler.js')
-const cors =require('cors')
+const connection  = require("./config/db.js")
 
 const app = express();
-const port = 3000; 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true}));
+const port = 3000;
 
-
-
+// Middleware always on TOP
+// app.use(authMiddleware) -- will use this in every private Route
 app.use(cors())
-
-mongoose.connect('mongodb+srv://shariq:ansari@cluster0.9i2lw1n.mongodb.net/')
-  .then(() => console.log('Connected!'))
-  .catch((error)=>{
-    console.log("eeroor",error);
-  })
-app.post('/createuser',registerUser);
-app.post('/loginuser',loginUser);
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 
-app.listen(port, () => {
+// Route Middleware
+app.use('/api/user', userRouter)
+app.use('/api/category', categoryRouter)
+app.use('/api/recipe', recipeRouter)
+
+
+app.listen(port, async () => {
+  try {
+    await connection
     console.log(`Server is running on port ${port}`);
-  });
 
-  console.log("ip", ip.address());
+  } catch (error) {
+    console.log("error at listen", error)
+  }
+});
+
+
+
+console.log("ip", ip.address());
+
+
