@@ -1,6 +1,3 @@
-
-const CategoryModel = require('../models/category.model')
-
 const express = require('express');
 const RecipeModel = require('../models/recipe.model');
 
@@ -51,27 +48,77 @@ recipeRouter.post('/getRecipe', async (req, res) => {
             sort: { createdAt: -1 }
         }
 
-
-        RecipeModel.paginate(req.body.search, options, (err, doc) => {
-            console.log('doc', doc);
-
-            if (doc.docs.length !== 0) {
-                res.status(200).json({
-                    data: doc,
-                    status: 200
-                })
-            }
-            else {
-                res.status(500).json({
-                    message: "no data found"
-                })
-
-            }
+        // const onlyAlphabetReg = /^[A-Za-z\s]+$/
+        const alphaNumericRegex = /^[A-Za-z0-9\s]+$/
 
 
+        // searching only aplhabets inside string
 
-        })
+        if (req.body.search.$text && alphaNumericRegex.test(req.body.search.$text.$search)) {
+            const dynamicFieldValue = req.body.search.$text.$search.trim()
 
+            const schema = RecipeModel.schema;
+
+            console.log("schema.path",schema);
+        
+
+
+            const fieldsToSearch = Object.keys(schema.paths).filter(
+                (path) => schema.paths[path].instance === 'String'
+
+            );
+
+            console.log("fieldsToSearch",fieldsToSearch);
+            // return
+            const orConditions = fieldsToSearch.map((field) => ({
+                // $options: "i" to avoid case senstivity
+                [field]: { $regex: dynamicFieldValue, $options: "i" }
+            }));
+
+
+            const searchQuery = {
+                $or: orConditions
+            };
+
+            RecipeModel.paginate(searchQuery, options, (err, doc) => {
+
+                if (doc.docs.length !== 0) {
+                    res.status(200).json({
+                        data: doc,
+                        status: 200
+                    })
+                }
+                else {
+                    res.status(500).json({
+                        message: "no data found"
+                    })
+
+                }
+
+            })
+
+
+
+        }else{
+
+
+            RecipeModel.paginate(req.body.search, options, (err, doc) => {
+
+                if (doc.docs.length !== 0) {
+                    res.status(200).json({
+                        data: doc,
+                        status: 200
+                    })
+                }
+                else {
+                    res.status(500).json({
+                        message: "no data found"
+                    })
+
+                }
+
+            })
+        }
     }
     catch (error) {
         console.log("error", error)
