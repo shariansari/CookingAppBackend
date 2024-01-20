@@ -19,13 +19,34 @@ const recipeSchema = new mongoose.Schema({
         trim: true,
 
     },
+    type : {
+        type : String,
+        required: true,
+        trim: true,
+    },
+      serving :{
+        type : Number,
+        required: true,
+        trim: true,
+    },
+    ingredients : {
+        type : Array,
+        required: true,
+        trim: true,    
+    },
+    steps : {
+        type : Array,
+        required: true,
+        trim: true,  
+    },
     category: {
         type: mongoose.Types.ObjectId,
         ref: "category",
         required: true
     },
-
-
+  
+   
+  
 }, {
     timestamps: true
 });

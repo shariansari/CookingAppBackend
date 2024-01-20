@@ -6,7 +6,6 @@ const recipeRouter = express.Router()
 
 
 recipeRouter.post('/addRecipe', async (req, res) => {
-
     console.log("req", req.body);
 
     try {
@@ -32,10 +31,10 @@ recipeRouter.post('/addRecipe', async (req, res) => {
 
 })
 
+
+
 recipeRouter.post('/getRecipe', async (req, res) => {
-
-    console.log("req", req.body);
-
+    console.log("req---->", req.body);
 
     try {
         const options = {
@@ -47,11 +46,7 @@ recipeRouter.post('/getRecipe', async (req, res) => {
             },
             sort: { createdAt: -1 }
         }
-
-        // const onlyAlphabetReg = /^[A-Za-z\s]+$/
-        const alphaNumericRegex = /^[A-Za-z0-9\s]+$/
-
-
+     const alphaNumericRegex = /^[A-Za-z0-9\s]+$/
         // searching only aplhabets inside string
 
         if (req.body.search.$text && alphaNumericRegex.test(req.body.search.$text.$search)) {
@@ -98,9 +93,7 @@ recipeRouter.post('/getRecipe', async (req, res) => {
             })
 
 
-
         }else{
-
 
             RecipeModel.paginate(req.body.search, options, (err, doc) => {
 

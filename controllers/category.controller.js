@@ -70,28 +70,6 @@ categoryRouter.post('/getCategory', async (req, res) => {
 
         })
 
-
-
-
-
-
-
-        // return
-        // const findCategory = await CategoryModel.find()
-        // console.log("findCategory", findCategory)
-
-        // if (findCategory.length !== 0) {
-        //     res.status(200).json({
-        //         data: findCategory,
-        //         status: 200
-        //     })
-        // }
-        // else {
-        //     res.status(500).json({
-        //         message: "no data found"
-        //     })
-
-        // }
     }
     catch (error) {
         console.log("error", error)

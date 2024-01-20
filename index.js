@@ -5,6 +5,8 @@ const cors = require('cors')
 const {userRouter} = require("./controllers/user.controler.js")
 const {categoryRouter} = require("./controllers/category.controller.js")
 const {recipeRouter} = require("./controllers/recipe.controller.js")
+const {favrouiteRouter} = require("./controllers/favorite.controller.js")
+
 
 const connection  = require("./config/db.js")
 
@@ -22,6 +24,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/user', userRouter)
 app.use('/api/category', categoryRouter)
 app.use('/api/recipe', recipeRouter)
+app.use('/api/favrouite', favrouiteRouter)
+
+
 
 
 app.listen(port, async () => {

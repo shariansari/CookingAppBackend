@@ -38,7 +38,6 @@ userRouter.post('/loginuser', async (req, res) => {
     }
 
     const user = UserModel.find({ email: email })
-
     user.then((doc) => {
 
         console.log("dioc outside-->", doc)
@@ -61,7 +60,7 @@ userRouter.post('/loginuser', async (req, res) => {
         else {
             console.log("inside 3")
 
-            res.json({ message: `login successfully`, status: 200 });
+            res.json({doc :doc, message: `login successfully`, status: 200 });
 
         }
 
