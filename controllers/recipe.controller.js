@@ -1,5 +1,6 @@
 const express = require('express');
 const RecipeModel = require('../models/recipe.model');
+const FavrouiteModel = require('../models/favrouite.model');
 
 const recipeRouter = express.Router()
 
@@ -35,6 +36,12 @@ recipeRouter.post('/addRecipe', async (req, res) => {
 
 recipeRouter.post('/getRecipe', async (req, res) => {
     console.log("req---->", req.body);
+    const userId = req.body.user
+    console.log("userId", userId);
+    const userFavrouiteRecipes = await FavrouiteModel.find({ user: { $in: userId } })
+
+    const userfavrouiteIdsArray = userFavrouiteRecipes.map((favRecId) => favRecId.recipe.toString())
+
 
     try {
         const options = {
@@ -46,27 +53,17 @@ recipeRouter.post('/getRecipe', async (req, res) => {
             },
             sort: { createdAt: -1 }
         }
-     const alphaNumericRegex = /^[A-Za-z0-9\s]+$/
-        // searching only aplhabets inside string
+        const alphaNumericRegex = /^[A-Za-z0-9\s]+$/
 
         if (req.body.search.$text && alphaNumericRegex.test(req.body.search.$text.$search)) {
             const dynamicFieldValue = req.body.search.$text.$search.trim()
-
+            const userId = req.body.user
             const schema = RecipeModel.schema;
-
-            console.log("schema.path",schema);
-        
-
-
             const fieldsToSearch = Object.keys(schema.paths).filter(
                 (path) => schema.paths[path].instance === 'String'
 
             );
-
-            console.log("fieldsToSearch",fieldsToSearch);
-            // return
             const orConditions = fieldsToSearch.map((field) => ({
-                // $options: "i" to avoid case senstivity
                 [field]: { $regex: dynamicFieldValue, $options: "i" }
             }));
 
@@ -76,10 +73,16 @@ recipeRouter.post('/getRecipe', async (req, res) => {
             };
 
             RecipeModel.paginate(searchQuery, options, (err, doc) => {
+                const updatedDocs = doc.docs.map((recipe) => {
+                    return {
+                        recipe,
+                        isFavrouite: userfavrouiteIdsArray.includes(recipe._id.toString())
+                    };
+                });
 
                 if (doc.docs.length !== 0) {
                     res.status(200).json({
-                        data: doc,
+                        data: updatedDocs,
                         status: 200
                     })
                 }
@@ -93,13 +96,21 @@ recipeRouter.post('/getRecipe', async (req, res) => {
             })
 
 
-        }else{
+        } else {
 
             RecipeModel.paginate(req.body.search, options, (err, doc) => {
+                const updatedDocs = doc.docs.map((recipe) => {
+                    return {
+                        recipe,
+                        isFavrouite: userfavrouiteIdsArray.includes(recipe._id.toString())
+                    };
+                });
+                
+                console.log("Updated Docs", updatedDocs);
 
                 if (doc.docs.length !== 0) {
                     res.status(200).json({
-                        data: doc,
+                        data: updatedDocs,
                         status: 200
                     })
                 }
