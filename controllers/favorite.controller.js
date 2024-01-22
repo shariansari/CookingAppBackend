@@ -55,23 +55,12 @@ favrouiteRouter.post('/getFavrouite', async (req, res) => {
         FavrouiteModel.paginate(req.body.search, options,async (err, doc) => {
 
 
-            console.log('docsdvsdsdvsdvsdcv', doc.docs);
-
-            console.log('doc', doc);
 
             const recipeIds = doc.docs.map(favorite => favorite.recipe);
             const recipes = await RecipeModel.find({ _id: { $in: recipeIds } });
 
-
-
-            console.log("recipeIds",recipeIds);
-            console.log("recipes",recipes);
-
-
-
             if (doc.docs.length !== 0) {
                 const result = {
-                    // favorites: doc,
                     recipes: recipes
                 };
                 console.log("result",result);
@@ -101,6 +90,47 @@ favrouiteRouter.post('/getFavrouite', async (req, res) => {
             status: 500
         })
 
+    }
+
+})
+
+
+
+
+
+favrouiteRouter.post('/deleteFavrouite', async (req, res) => {
+    console.log("req", req.body);
+    const { recipe, user } = req.body;
+
+    try {
+        if (!recipe || !user) {
+            return res.status(400).json({
+                message: 'Please provide both recipeId and userId in the request body',
+                status: 400
+            });
+        }
+
+        const existingFavorite = await FavrouiteModel.findOne({ recipe: recipe, user: user });
+
+        if (!existingFavorite) {
+            return res.status(404).json({
+                message: 'Favorite not found',
+                status: 404
+            });
+        }
+
+        await existingFavorite.deleteOne();
+
+        res.status(200).json({
+            message: 'Favorite deleted successfully',
+            status: 200
+        });
+    } catch (error) {
+        console.error('Error deleting favorite:', error);
+        res.status(500).json({
+            message: 'Unable to delete favorite. Please try again.',
+            status: 500
+        });
     }
 
 })

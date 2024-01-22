@@ -1,5 +1,4 @@
 const UserModel = require('../models/user.model.js')
-const CategoryModel = require('../models/category.model.js')
 
 const express = require('express')
 
@@ -28,7 +27,6 @@ userRouter.post('/createuser', async (req, res) => {
     }
 })
 
-
 userRouter.post('/loginuser', async (req, res) => {
     console.log("req", req.body);
     const { email, password } = req.body
@@ -39,12 +37,6 @@ userRouter.post('/loginuser', async (req, res) => {
 
     const user = UserModel.find({ email: email })
     user.then((doc) => {
-
-        console.log("dioc outside-->", doc)
-
-        console.log("password", password);
-        console.log("doc[0].password", doc[0].password);
-
 
         if (doc.length == 0) {
             console.log("inside 1")
