@@ -37,6 +37,7 @@ userRouter.post('/loginuser', async (req, res) => {
 
     const user = UserModel.find({ email: email })
     user.then((doc) => {
+        console.log("doc",doc);
 
         if (doc.length == 0) {
             console.log("inside 1")
