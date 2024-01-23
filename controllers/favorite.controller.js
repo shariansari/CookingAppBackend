@@ -54,8 +54,14 @@ favrouiteRouter.post('/getFavrouite', async (req, res) => {
         }
 
 
+
         FavrouiteModel.paginate(req.body.search, options,async (err, doc) => {
-            if (doc.docs.length !== 0) {
+
+
+            const recipeIds = doc.docs.map(favorite => favorite.recipe);
+            const recipes = await RecipeModel.find({ _id: { $in: recipeIds } });
+
+            if (doc?.docs?.length !== 0) {
                 const result = {
                     recipes: recipes
                 };
