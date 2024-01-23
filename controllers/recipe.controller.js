@@ -106,7 +106,7 @@ recipeRouter.post('/getRecipe', async (req, res) => {
                     };
                 });
                 
-                console.log("Updated Docs", updatedDocs);
+                // console.log("Updated Docs", updatedDocs);
 
                 if (doc.docs.length !== 0) {
                     res.status(200).json({

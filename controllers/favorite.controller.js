@@ -2,7 +2,6 @@ const express = require('express');
 const favrouiteSchema = require('../models/favrouite.model');
 const FavrouiteModel = require('../models/favrouite.model');
 const RecipeModel = require('../models/recipe.model');
-const { fromLong } = require('ip');
 
 const favrouiteRouter = express.Router()
 
@@ -16,13 +15,13 @@ favrouiteRouter.post('/addFavrouite', async (req, res) => {
         const favrouite = new favrouiteSchema(body)
         favrouite.save().then((doc) => {
             console.log("doc", doc)
+            res.status(200).json({
+                message: "Favrouite Added successfully",
+                status: 200,
+                _id:doc.recipe
+            })
         })
-        res.status(200).json({
-            message: "Favrouite Added successfully",
-            status: 200,
-            doc: doc
-        })
-
+        
     }
     catch (error) {
         console.log("error-----------", error)
