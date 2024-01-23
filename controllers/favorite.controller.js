@@ -2,6 +2,7 @@ const express = require('express');
 const favrouiteSchema = require('../models/favrouite.model');
 const FavrouiteModel = require('../models/favrouite.model');
 const RecipeModel = require('../models/recipe.model');
+const { fromLong } = require('ip');
 
 const favrouiteRouter = express.Router()
 
@@ -19,6 +20,7 @@ favrouiteRouter.post('/addFavrouite', async (req, res) => {
         res.status(200).json({
             message: "Favrouite Added successfully",
             status: 200,
+            doc: doc
         })
 
     }
@@ -48,17 +50,12 @@ favrouiteRouter.post('/getFavrouite', async (req, res) => {
                 locale: 'en',
                 strength: 2
             },
-            sort: { createdAt: -1 }
+            sort: { createdAt: -1 },
+            populate :"recipe"
         }
 
 
         FavrouiteModel.paginate(req.body.search, options,async (err, doc) => {
-
-
-
-            const recipeIds = doc.docs.map(favorite => favorite.recipe);
-            const recipes = await RecipeModel.find({ _id: { $in: recipeIds } });
-
             if (doc.docs.length !== 0) {
                 const result = {
                     recipes: recipes
