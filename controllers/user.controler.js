@@ -46,8 +46,6 @@ userRouter.post('/loginuser', async (req, res) => {
 
         }
         else if (password !== doc[0].password) {
-            console.log();
-            console.log("inside 2")
             return res.status(401).send({ message: "Wrong Credential", status: 400 })
         }
         else {
