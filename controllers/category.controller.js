@@ -53,7 +53,7 @@ categoryRouter.post('/getCategory', async (req, res) => {
         CategoryModel.paginate(req.body.search, options, (err, doc) => {
             console.log('doc', doc);
 
-            if (doc.docs.length !== 0) {
+            if (doc?.docs?.length !== 0) {
                 res.status(200).json({
                     data: doc,
                     status: 200
