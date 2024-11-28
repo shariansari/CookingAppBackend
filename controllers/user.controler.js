@@ -3,6 +3,9 @@ const UserModel = require('../models/user.model.js')
 const express = require('express')
 
 const userRouter = express.Router()
+trainerRouter.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 
 userRouter.post('/createuser', async (req, res) => {
     console.log("req", req.body);
